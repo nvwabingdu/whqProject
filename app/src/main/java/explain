@@ -1,0 +1,19 @@
+//集成：ButterKnife插件   parcelable插件   EventBus   rxAndroid   RxJava 等常用插件，三方
+//接入 推送 支付 分享 三方SDk
+//请求封装
+//账户设置 登录 注册 头像 信息
+//设置
+
+
+
+//BaseActivity
+//1.关于  onpause-->onSaveInstanceState<--onstop   和   onStart-->onRestoreInstanceState<--onResume  不一定成对出现 出现位置也不一定
+//2.（未经你许可销毁时）在系统 1.按下HOME键 2.选择运行其他的程序  3.按下电源按键（关闭屏幕显示）时  4.从activity A中启动一个新的activity 5.屏幕方向切换时，例如从竖屏切换到横屏时。
+//3.大多时候不被成对使用。
+//4.不同于生命周期  因为不一定被调用。  持久化操作不要用在这里， 应写在onPause()周期。
+//5.所以写的时候只用于暂时的一些数据，且最好在onCreat里面也写上。
+
+
+
+
+

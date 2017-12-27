@@ -1,0 +1,104 @@
+//自定义控件
+//1.  inflate(int resource, ViewGroup root, boolean attachToRoot)
+//1. 如果root为null，attachToRoot将失去作用，设置任何值都没有意义。
+  2. 如果root不为null，attachToRoot设为true，则会给加载的布局文件的指定一个父布局，即root。
+  3. 如果root不为null，attachToRoot设为false，则会将布局文件最外层的所有layout属性进行设置，当该view被添加到父view当中时，这些layout属性会自动生效。
+  4. 在不设置attachToRoot参数的情况下，如果root不为null，attachToRoot参数默认为true。
+
+
+  测量：onMeasure()：widthMeasureSpec和heightMeasureSpec，这两个值分别用于确定视图的宽度和高度的规格和大小。
+  视图大小的控制是由父视图、布局文件、以及视图本身共同完成的，
+  父视图会提供给子视图参考的大小，而开发人员可以在XML文件中指定视图的大小，然后视图本身会对最终的大小进行拍板。
+  @Override  //重写
+      protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+          setMeasuredDimension(200, 200);
+      }
+
+
+
+  布局：onLayout()：layout()方法接收四个参数，分别代表着左、上、右、下的坐标
+  host.layout(0, 0, host.mMeasuredWidth, host.mMeasuredHeight);
+
+
+
+  onDraw()：
+
+  两种方式的区别
+  getMeasureWidth()方法在measure()过程结束后就可以获取到了，getMeasureWidth()方法中的值是通过setMeasuredDimension()方法来进行设置的，
+  getWidth()方法要在layout()过程结束后才能获取到。etWidth()方法中的值则是通过视图右边的坐标减去左边的坐标计算出来的。
+
+
+  而如果你希望视图的绘制流程可以完完整整地重新走一遍，就不能使用invalidate()方法，
+  而应该调用requestLayout()了。这个方法中的流程比invalidate()方法要简单一些，但中心思想是差不多的，这里也就不再详细进行分析了。
+
+
+
+
+
+
+
+//四个构造函数的理解
+
+//自定义控件一参构造
+    第一个构造函数用途并不大，主要是在java代码中声明一个View时所用，
+    不过如果只用第一个构造函数，声明的View并没有任何的参数，基本是个空的View对象。
+    public NetworkStateView(@NonNull Context context) {
+        super(context);
+    }
+
+
+//自定义控件二参构造
+    在布局文件中引用时，在系统初始化该View时，调用的是第二个构造函数，
+    而且我还把第二个构造函数中的attrs参数也打了出来，可以看出其中的参数attrs是我们在xml中配置的参数。
+    public NetworkStateView(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+
+
+//自定义控件三参构造
+    public NetworkStateView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+
+
+//自定义控件四参构造
+    public NetworkStateView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+
+
+
+//+++++++++++++++++++++++++++++++++++++++++重要分割线1+++++++++++++++++++++++++++++++++++++++++++++++++++++\\
+   在将讲之前要插一段重点：
+   android中可以配置一个主题，从而使得一些View即使你不对其进行任何配置，它都会有一些已经默认赋值的属性，这就是主题的功劳。
+   View类的后两个构造函数都是与主题相关的，也就是说，在你自定义View时，如果不需要你的View随着主题变化而变化，有前两个构造函数就OK了，
+   但是如果你想你的View随着主题变化而变化，就需要利用后两个构造函数了。
+
+//+++++++++++++++++++++++++++++++++++++++++重要分割线2+++++++++++++++++++++++++++++++++++++++++++++++++++++\\
+    参数三--> defStyleAttr：是一个属性资源，这个属性资源跟主题有一个奇妙的协议：只要在主题中对这个属性赋值，该View就会自动应用这个属性的值。
+
+    参数四--> defStyleRes：这个参数说，只有在第三个参数defStyleAttr为0，或者主题中没有找到这个defStyleAttr属性的赋值时，才可以启用。
+    而且这个参数不再是Attr了，而是真正的style。其实这也是一种低级别的“默认主题”，即在主题未声明属性值时，我们可
+    以主动的给一个style，使用这个构造函数定义出的View，其主题就是这个定义的defStyleRes（是一种写死的style，因此优先级被调低）
+
+
+//+++++++++++++++++++++++++++++++++++++++++重要分割线3+++++++++++++++++++++++++++++++++++++++++++++++++++++\\
+     在View类中有四个构造函数，涉及到多个参数，
+     Context：上线文，这个不用多说
+     AttributeSet attrs： 从xml中定义的参数
+     int defStyleAttr ：主题中优先级最高的属性
+     int defStyleRes  ：优先级次之的内置于View的style
+
+//+++++++++++++++++++++++++++++++++++++++++重要分割线4+++++++++++++++++++++++++++++++++++++++++++++++++++++\\
+     在android中的属性可以在多个地方进行赋值，涉及到的优先级排序为：
+     Xml直接定义 > xml中style引用 > defStyleAttr > defStyleRes > theme直接定义
+
+//+++++++++++++++++++++++++++++++++++++++++重要分割线5总结+++++++++++++++++++++++++++++++++++++++++++++++++++++\\
+      <item name="android:textViewStyle">@style/BlueTextStyle</item>  //这是属性样式    defStyleAttr
+      <item name="android:textColor">@android:color/holo_purple</item>  //这是主题   scheme
+      defStyleRes 这是调用的默认样式 类似----->R.style.GreenTextStyle
+
+

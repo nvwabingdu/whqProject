@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <!--像素-->
+    <!--代码使用：-->
+    <!--int width=getContext().getResources().getDimension(R.dimen.tab_width);-->
+    <!--xml文件使用：-->
+    <!--android:layout_width="@dimen/tab_width"-->
+    <dimen name="sp15">15sp</dimen>
+
+    <!--颜色-->
+    <!--两种方式皆可-->
+    <item name="bgcolor" type="color">#000000</item>
+    <color name="contents_text">#ff000000</color>
+
+
+    <!--文本-->
+    <string name="button_confirm">确定</string>
+    <string name="button_cancel">取消</string>
+
+    <!--Resources res = getResources();-->
+    <!--String[] planets = res.getStringArray(R.array.planets_array);-->
+    <string-array name="page_animations">
+        <item>100</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <!--风格style与主题theme区别：-->
+    <!--1：style主要用于View，theme主要用于Activity以及Application-->
+    <!--2、style主要用于设置View的属性，theme主要用设置Activity的样式如是：否全屏-->
+    <!--3、style与theme都是以<style><item>文本</item></style>创建，只是item的内容不一样-->
+    <style name="TitleStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#ec9237</item>
+    </style>
+    <!--继承TitleStyle属性-->
+    <style name="Title" parent="@style/TitleStyle">
+        <item name="android:textSize">5sp</item>
+    </style>
+
+
+    <!--主题-->
+    <!--注意：setTheme应该在setContentView之前调用。-->
+    <!--setTeme(R.theme.theme1);/setTeme(R.style.theme1)-->
+    <!--setContentView(R.layout.main);-->
+    <style name="theme1">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">?android:windowNoTitle</item>
+    </style>
+
+
+    <!--我们用了“@”符号和“？”符号来应用资源。-->
+    <!--“@”符号表明了我们应用的资源是前边定义过的(或者在前一个项目中或者在Android 框架中)。-->
+    <!--“？”表明了我们引用的资源的值在当前的主题当中定义的。-->
+
+    <!--http://blog.csdn.net/vipzjyno1/article/details/23696537-->
+    <declare-styleable name="PersonAttr">
+        <attr name="name" format="reference" />
+        <attr name="sex" format="reference" />
+        <attr name="age" format="integer" />
+        <attr name="weight">
+            <flag name="fat" value="2" />
+            <flag name="mid" value="1" />
+            <flag name="thin" value="0" />
+        </attr>
+        <attr name="adult" format="boolean" />
+        <attr name="textSize" format="dimension" />
+    </declare-styleable>
+
+    <!--1. reference：参考某一资源ID，以此类推-->
+
+
+</resources>

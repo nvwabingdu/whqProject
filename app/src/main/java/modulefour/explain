@@ -1,0 +1,5 @@
+
+四大组件：
+   4大基本组件都需要注册才能使用,每个Activity、service、Content Provider内容提供者都需要在AndroidManifest文件中进行配置
+AndroidManifest文件中未进行声明的activity、服务以及内容提供者将不为系统所见，从而也就不可用，
+

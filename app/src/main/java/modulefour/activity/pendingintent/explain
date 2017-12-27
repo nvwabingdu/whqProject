@@ -1,0 +1,49 @@
+参考：
+https://www.cnblogs.com/liyiran/p/4656821.html
+
+                                       延迟Intent
+                                       intent英文意思是意图，pending表示即将发生或来临的事情。
+                                       PendingIntent这个类用于处理即将发生的事情。比如在通知Notification中用于跳转页面，但不是马上跳转。
+
+ getActivity(Context, int, Intent, int)，
+ getActivities(Context, int, Intent[], int)，
+ getBroadcast(Context, int, Intent, int)，
+ getService(Context, int, Intent, int)
+
+
+ 这几个静态方法分别对应着Intent的行为，跳转到Activity,Activities,Broadcast,Service。
+ 这4个静态方法的参数都一样，其中第一个和第三个参数比较的重要，其次是第二个和第四个。第一个参数传入当前的context,第三个参数传入intent.
+
+
+Intent：一般是用作Activity、Sercvice、BroadcastReceiver之间传递数据。
+Pendingintent：一般用在 Notification上，可以理解为延迟执行的intent，PendingIntent是对Intent一个包装。
+
+用于通知使用
+Notification：
+NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+mBuilder.setSmallIcon(R.drawable.notification_icon)
+mBuilder.setContentTitle("My notification")
+mBuilder.setContentText("Hello World!");
+Intent resultIntent = new Intent(this, ResultActivity.class);
+PendingIntent resultPendingIntent = PendingIntent.getActivity(this,0,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+mBuilder.setContentIntent(resultPendingIntent);
+int mNotificationId = 001;
+// Gets an instance of the NotificationManager service
+NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+// Builds the notification and issues it.
+mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+
+//用于消息使用
+SmsManager：
+SmsManager smsManage = SmsManager.getDefault();
+Intent intent=new Intent("SEND_SMS_ACTION");
+PendingIntent pendingIntent=PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+smsManage.sendTextMessage("13xxxxxxxxx", null, "这是一条短信", pendingIntent, null);
+
+
+主要常量
+FLAG_CANCEL_CURRENT:如果当前系统中已经存在一个相同的PendingIntent对象，那么就将先将已有的PendingIntent取消，然后重新生成一个PendingIntent对象。
+FLAG_NO_CREATE:如果当前系统中不存在相同的PendingIntent对象，系统将不会创建该PendingIntent对象而是直接返回null。
+FLAG_ONE_SHOT:该PendingIntent只作用一次。在该PendingIntent对象通过send()方法触发过后，PendingIntent将自动调用cancel()进行销毁，那么如果你再调用send()方法的话，系统将会返回一个SendIntentException。
+FLAG_UPDATE_CURRENT:如果系统中有一个和你描述的PendingIntent对等的PendingInent，那么系统将使用该PendingIntent对象，但是会使用新的Intent来更新之前PendingIntent中的Intent对象数据，例如更新Intent中的Extras。

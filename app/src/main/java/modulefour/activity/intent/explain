@@ -1,0 +1,169 @@
+
+
+                                  intent详解
+                                        http://blog.csdn.net/harvic880925/article/details/38399723
+                                        http://blog.csdn.net/qq_31370269/article/details/50725701
+
+
+
+intent：动作(Action),数据(Data),分类(Category),类型(Type),组件(Compent)以及扩展信息(Extra)
+//使用方式如下
+        1.显式
+        Intent intent = new Intent();
+        intent.setClass(Context packageContext, OtherActivity.class);
+        startActivity(intent);
+
+                //1.表示希望启动com.example.test_permission包中的com.example.test_permission.MainActivity
+                Intent intent = new Intent();
+                intent.setClassName("com.example.test_permission", "com.example.test_permission.MainActivity");
+                startActivity(intent);
+
+                //2.
+                Intent intent = new Intent();
+                intent.setClass(Context packageContext, OtherActivity.class);
+                startActivity(intent);
+        2.隐式
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_NEW);
+        startActivity(intent);
+
+
+
+
+
+filter:intent-filter    <intent-filter>里有以下几个属性可以让intent来匹配：Action、Category、Data
+//使用方式如下
+        <activity android:name=".TargetActivity">
+        <intent-filter>
+            <action android:name="com.scott.intent.action.TARGET"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <data android:scheme="scott" android:host="com.scott.intent.data" android:port="7788" android:path="/target"/>
+        </intent-filter>
+        </activity>
+
+        //<intent-filter>里有以下几个属性可以让intent来匹配：Action、Category、Data
+        1.action：该activity可以执行的动作
+                  1.一条<intent-filter>元素至少应该包含一个<action>，否则任何Intent请求都不能和该<intent-filter>匹配。
+                  2.如果Intent请求的Action和<intent-filter>中个任意一条<action>匹配，那么该Intent就可以激活该activity(前提是除了action的其它项也要通过)。
+                    ACTION_CALL activity 启动一个电话.
+                    ACTION_EDIT activity 显示用户编辑的数据.
+                    ACTION_MAIN activity 作为Task中第一个Activity启动
+                    ACTION_SYNC activity 同步手机与数据服务器上的数据.
+                    ACTION_BATTERY_LOW broadcast receiver 电池电量过低警告.
+                    ACTION_HEADSET_PLUG broadcast receiver 插拔耳机警告
+                    ACTION_SCREEN_ON broadcast receiver 屏幕变亮警告.
+                    ACTION_TIMEZONE_CHANGED broadcast receiver 改变时区警告.
+
+
+
+        2.category：指定当前动作（Action）被执行的环境  即这个activity在哪个环境中才能被激活。不属于这个环境的，不能被激活。
+                    CATEGORY_DEFAULT：Android系统中默认的执行方式，按照普通Activity的执行方式执行。表示所有intent都可以激活它　
+                    CATEGORY_HOME：设置该组件为Home Activity。
+                    CATEGORY_PREFERENCE：设置该组件为Preference。　
+                    CATEGORY_LAUNCHER：设置该组件为在当前应用程序启动器中优先级最高的Activity，通常为入口ACTION_MAIN配合使用。　
+                    CATEGORY_BROWSABLE：设置该组件可以使用浏览器启动。表示该activity只能用来浏览网页。　
+                    CATEGORY_GADGET：设置该组件可以内嵌到另外的Activity中。
+
+
+        3.date：执行时要操作的数据
+                    在目标<data/>标签中包含了以下几种子元素，他们定义了url的匹配规则：
+                    android:scheme 匹配url中的前缀，除了“http”、“https”、“tel”...之外，我们可以定义自己的前缀
+                    android:host 匹配url中的主机名部分，如“google.com”，如果定义为“*”则表示任意主机名
+                    android:port 匹配url中的端口
+                    android:path 匹配url中的路径
+
+                    注意：
+                    这个标识比较特殊，它定义了执行此Activity时所需要的数据，也就是说，这些数据是必须的！！！！！所有如果其它条件都足以激活该Activity，但intent却没有传进来指定类型的Data时，就不能激活该activity！！！！
+
+
+Extras：临时演员
+        用于两个activity之间的值传递
+
+
+
+
+
+扩展
+//常用系统调用
+        // 调用浏览器
+        Uri webViewUri = Uri.parse("http://blog.csdn.net/zuolongsnail");
+        Intent intent = new Intent(Intent.ACTION_VIEW, webViewUri);
+
+        // 调用地图
+        Uri mapUri = Uri.parse("geo:100,100");
+        Intent intent = new Intent(Intent.ACTION_VIEW, mapUri);
+
+        // 播放mp3
+        Uri playUri = Uri.parse("file:///sdcard/test.mp3");
+        Intent intent = new Intent(Intent.ACTION_VIEW, playUri);
+        intent.setDataAndType(playUri, "audio/mp3");
+
+        // 调用拨打电话
+        Uri dialUri = Uri.parse("tel:10086");
+        Intent intent = new Intent(Intent.ACTION_DIAL, dialUri);
+        // 直接拨打电话，需要加上权限<uses-permission id="android.permission.CALL_PHONE" />
+        Uri callUri = Uri.parse("tel:10086");
+        Intent intent = new Intent(Intent.ACTION_CALL, callUri);
+
+        // 调用发邮件（这里要事先配置好的系统Email，否则是调不出发邮件界面的）
+        Uri emailUri = Uri.parse("mailto:zuolongsnail@163.com");
+        Intent intent = new Intent(Intent.ACTION_SENDTO, emailUri);
+        // 直接发邮件
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        String[] tos = { "zuolongsnail@gmail.com" };
+        String[] ccs = { "zuolongsnail@163.com" };
+        intent.putExtra(Intent.EXTRA_EMAIL, tos);
+        intent.putExtra(Intent.EXTRA_CC, ccs);
+        intent.putExtra(Intent.EXTRA_TEXT, "the email text");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "subject");
+        intent.setType("text/plain");
+        Intent.createChooser(intent, "Choose Email Client");
+
+        // 发短信
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.putExtra("sms_body", "the sms text");
+        intent.setType("vnd.android-dir/mms-sms");
+        // 直接发短信
+        Uri smsToUri = Uri.parse("smsto:10086");
+        Intent intent = new Intent(Intent.ACTION_SENDTO, smsToUri);
+        intent.putExtra("sms_body", "the sms text");
+        // 发彩信
+        Uri mmsUri = Uri.parse("content://media/external/images/media/23");
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra("sms_body", "the sms text");
+        intent.putExtra(Intent.EXTRA_STREAM, mmsUri);
+        intent.setType("image/png");
+
+        // 卸载应用
+        Uri uninstallUri = Uri.fromParts("package", "com.app.test", null);
+        Intent intent = new Intent(Intent.ACTION_DELETE, uninstallUri);
+        // 安装应用
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(new File("/sdcard/test.apk"), "application/vnd.android.package-archive");
+
+        // 在Android Market中查找应用
+        Uri uri = Uri.parse("market://search?q=愤怒的小鸟");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+
+
+
+//Activity的回调
+        //B这边：
+        Intent inetnt = getIntent();
+        intent.putExtra(键,值)；
+        setResult(1,i); //由这个方法返回一个数据给A
+
+        //A这边：
+        Intent intent = new Intent();
+        startActivityForResult(i,0);   //使用这种方法才能接收B返回的数据。
+
+        /**
+        *@param requstCode 对应A中的请求码
+        *@param resultCode 对应B中的返回码
+        *@param data B中的Intent对象
+        */
+        @Override
+        protected void onActivityResult(int requstCode,int resultCode,Intent data){
+            super.onActivityResult(requestCode,resultCode,data);
+        }
